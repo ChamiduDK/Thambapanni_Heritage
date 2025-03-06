@@ -1,12 +1,30 @@
+<?php
+session_start();
+require_once 'db_connect.php';
+
+// Fetch the 3 latest products
+$product_query = "SELECT p.*, c.name AS category_name 
+                  FROM products p 
+                  LEFT JOIN categories c ON p.category_id = c.id 
+                  ORDER BY p.id DESC LIMIT 3"; // Adjust 'id' to 'created_at' if you have a timestamp
+$products = $connection->query($product_query)->fetch_all(MYSQLI_ASSOC);
+
+// Fetch product categories
+$category_query = "SELECT * FROM categories WHERE type = 'product'";
+$categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sri Lankan Artisans - Cultural Showcase</title>
-    <link rel="stylesheet" href="css/style.css">
     <link href="images/TH_logo_br.png" rel="icon">
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
 </head>
 <body>
     <!-- Header Section -->
@@ -19,20 +37,28 @@
                 <li><a href="#categories">Categories</a></li>
                 <li><a href="#products">Products</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="login.php" class="btn2">Login</a></li>
-                <li><a href="Registration.php" class="btn2">Register</a></li>
+                <li><a href="shop.php">Shop</a></li>
+                <li><a href="#">Learn</a></li>
+                <li><a href="#" style="color: #FFC107;"><b>Become a Seller</b></a></li>
+                <li><a href="customer_login.php"><b>Sign in</b></a></li>
+                <li><a href="customer_registration.php" class="btn2">Register</a></li>
             </ul>
             <div class="hamburger">☰</div>
         </nav>
-        <div class="hero-content">
-            <h1>Discover Sri Lanka's Cultural Treasures</h1>
-            <p>Connecting artisans to the world through a modern platform.</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Search for products or artisans..." id="search-input">
+    <div class="hero-content">
+        <h1>Discover Sri Lanka's Cultural Treasures</h1>
+        <p>Connecting artisans to the world through a modern platform.</p>
+        <?php if (isset($_GET['message'])) { ?>
+            <p><?php echo htmlspecialchars($_GET['message']); ?></p>
+        <?php } ?>
+        <div class="search-bar">
+            <form action="search.php" method="GET">
+                <input type="text" name="search" placeholder="Search for products or artisans..." id="search-input">
                 <button type="submit" id="search-btn">Search</button>
-            </div>
-            <a href="#about" class="btn">Learn More</a>
+            </form>
         </div>
+        <a href="#about" class="btn">Learn More</a>
+    </div>
     </header>
 
     <!-- About Section -->
@@ -40,7 +66,7 @@
         <div class="container">
             <h2>About Our Mission</h2>
             <p>Sri Lanka is globally recognized for its rich cultural diversity and traditional craftsmanship, including handicrafts, paintings, textiles, and sculptures. However, many talented artisans lack access to modern platforms to display their products and reach wider audiences. This project addresses this gap by offering a dedicated e-commerce and showcase platform tailored specifically for Sri Lankan cultural products.</p>
-            <a href="#" class="btn secondary">Join Us</a>
+            <a href="Registration.php" class="btn secondary">Join Us</a>
         </div>
     </section>
 
@@ -69,32 +95,30 @@
         </div>
     </section>
 
-    <!-- Latest Products Section -->
+<!-- Latest Products Section -->
     <section id="products" class="products">
         <div class="container">
             <h2>Latest Products</h2>
             <div class="product-grid">
-                <div class="product-item">
-                    <img src="images/product1.jpg" alt="Product 1">
-                    <h3>Handwoven Basket</h3>
-                    <p>LKR 2,500</p>
-                    <a href="products.php" class="btn">View Details</a>
-                </div>
-                <div class="product-item">
-                    <img src="images/product2.jpg" alt="Product 2">
-                    <h3>Batik Painting</h3>
-                    <p>LKR 4,000</p>
-                    <a href="products.php" class="btn">View Details</a>
-                </div>
-                <div class="product-item">
-                    <img src="images/product3.jpg" alt="Product 3">
-                    <h3>Wooden Sculpture</h3>
-                    <p>LKR 6,500</p>
-                    <a href="products.php" class="btn">View Details</a>
-                </div>
+                <?php if (empty($products)) { ?>
+                    <p>No products available.</p>
+                <?php } else { ?>
+                    <?php foreach ($products as $product) { ?>
+                        <div class="product-item">
+                            <?php if (!empty($product['image'])) { ?>
+                                <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            <?php } else { ?>
+                                <img src="images/placeholder.jpg" alt="No Image">
+                            <?php } ?>
+                            <h3><?php echo htmlspecialchars($product['name']); ?></h3>
+                            <p>LKR <?php echo number_format($product['price'], 2); ?></p>
+                            <a href="shop.php?product_id=<?php echo $product['id']; ?>" class="btn">View Details</a>
+                        </div>
+                    <?php } ?>
+                <?php } ?>
             </div>
             <div class="view-all">
-                <a href="products.php" class="btn secondary">View All Products</a>
+                <a href="shop.php" class="btn secondary">View All Products</a>
             </div>
         </div>
     </section>

@@ -401,24 +401,24 @@ footer {
 
   .search-bar {
     flex-direction: column;
-    gap: 15px; /* Space between input and button */
-    width: 90%; /* Wider on mobile */
+    gap: 15px; 
+    width: 90%; 
     margin: 20px;
 
 }
 
 .search-bar input {
     width: 100%;
-    border-radius: 25px; /* Fully rounded when stacked */
-    padding: 16px 20px; /* Larger padding for touch */
+    border-radius: 25px; 
+    padding: 16px 20px; 
     font-size: 16px;
 }
 
 .search-bar button {
     width: 100%;
-    max-width: 200px; /* Limit button width */
-    border-radius: 25px; /* Fully rounded when stacked */
-    padding: 16px 30px; /* Larger padding for touch */
+    max-width: 200px; 
+    border-radius: 25px; 
+    padding: 16px 30px; 
     font-size: 16px;
     
 }
@@ -461,3 +461,4 @@ footer {
       border-radius: 25px;
   }
 }
+

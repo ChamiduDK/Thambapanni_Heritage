@@ -73,6 +73,7 @@ h1 {
     text-align: center;
     color: var(--saffron);
     font-size: 2rem;
+    padding-bottom: 20px;
 }
 .overview {
     display: flex;

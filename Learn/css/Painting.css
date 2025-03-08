@@ -26,7 +26,7 @@ body {
 .hero {
     height: 80vh;
     background: linear-gradient(rgba(0, 0, 0, 0.055), rgba(0, 0, 0, 0.312)),
-                url('../image/painthero.jpg');
+                url('https://galleryceylon.lk/wp-content/uploads/2021/04/traditional-paintings.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -351,64 +351,7 @@ h1 {
     opacity: 0.9;
 }
 
-/* Instructions Section */
-.instructions {
-    padding: 80px 20px;
-    background: var(--white);
-}
 
-.instruction-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.instruction-card {
-    background: var(--gray);
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    transition: var(--transition);
-}
-
-.instruction-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow);
-}
-
-.instruction-card i {
-    font-size: 2.5rem;
-    color: var(--saffron);
-    margin-bottom: 20px;
-}
-
-.instruction-card h3 {
-    color: var(--maroon);
-    margin-bottom: 15px;
-    font-size: 1.3rem;
-}
-
-.instruction-card ul {
-    list-style: none;
-    padding: 0;
-    text-align: left;
-}
-
-.instruction-card ul li {
-    margin: 10px 0;
-    color: #666;
-    padding-left: 20px;
-    position: relative;
-}
-
-.instruction-card ul li::before {
-    content: '•';
-    color: var(--saffron);
-    position: absolute;
-    left: 0;
-}
 
 .footer{
   

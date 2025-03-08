@@ -91,6 +91,10 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
                     <img src="images/sculptures.jpg" alt="Sculptures">
                     <h3>Sculptures</h3>
                 </div>
+                <div class="category-item">
+                    <img src="images/ceramic.jpg" alt="Sculptures">
+                    <h3>Ceramic</h3>
+                </div>
             </div>
         </div>
     </section>

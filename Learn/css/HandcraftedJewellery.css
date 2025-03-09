@@ -1,0 +1,452 @@
+:root {
+    --saffron: #FF9933;
+    --green: #00843D;
+    --maroon: #8C2A3C;
+    --gold: #FFC107;
+    --white: #FFFFFF;
+    --gray: #F5F5F5;
+    --dark-maroon: #5C1A28;
+    --light-saffron: #FFDAB3;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--gray);
+    color: var(--maroon);
+    transition: var(--transition);
+}
+
+/* Header & Navigation */
+header {
+    background-color: var(--dark-maroon);
+    color: var(--white);
+    padding: 1rem 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--white);
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: var(--gold);
+}
+
+
+
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    color: var(--white);
+    text-align: center;
+    padding: 100px 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden; /* Ensures no overflow from pseudo-elements */
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('images/header.jpeg') no-repeat center center/cover;
+    filter: blur(3px); /* Apply blur effect */
+    z-index: -1; /* Keep it behind the content */
+}
+
+.hero-content h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+
+
+.hero-content button {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    color: var(--white);
+    background: var(--green);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.hero-content button:hover {
+    background: var(--gold);
+    color: var(--dark-maroon);
+}
+
+/* Section Styling */
+.section {
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    gap: 200px;
+    flex-wrap: wrap;
+}
+
+.section:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.image-container {
+    flex: 1;
+    max-width: 500px;
+    
+
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.section-content {
+    flex: 1;
+    max-width: 600px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: black;
+}
+
+/* Footer Styling */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: var(--maroon);
+    color: var(--white);
+}
+
+button {
+    padding: 10px 20px;
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+button:hover {
+    background: var(--gold);
+}
+
+/* Gallery Styling */
+.gallery-section {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    background: var(--light-saffron);
+}
+
+.gallery-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.gallery-container img {
+    width: 350px;
+    height: 350px;
+    border-radius: 12px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Modal Styling */
+.gallery-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.modal-gallery {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.modal-gallery img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .section {
+        flex-direction: column;
+    }
+
+    .section-content, .image-container {
+        max-width: 100%;
+    }
+
+    .gallery-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .gallery-container img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* Animation for the scrolling effect */
+@keyframes scrollGallery {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Footer Styling */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: var(--maroon);
+    color: var(--white);
+}
+
+button {
+    padding: 10px 20px;
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+button:hover {
+    background: var(--gold);
+}
+
+/* Gallery Section */
+.gallery-section {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    background: var(--light-saffron);
+}
+
+.gallery-container {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.gallery-scroll {
+    display: flex;
+    gap: 20px;
+    animation: slideLeftToRight 20s linear infinite;
+}
+
+.gallery-scroll img {
+    width: 350px;
+    height: 350px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: var(--shadow);
+}
+
+/* Slide Effect Animation */
+@keyframes slideLeftToRight {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .gallery-scroll img {
+        width: 100%;
+        height: auto;
+    }
+}
+.footer{
+  
+    width: 100%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,auto));
+    gap: 1.5rem;
+    margin-top: 200px;
+    background: #8C2F39;
+    border-radius: 0.5rem;
+    padding: 20px;
+    color: #FFF;
+  
+  
+  }
+  .footer-box{
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+  }
+  
+  
+  .footer-box p{
+    font-size: 0.938rem;
+    margin: 0.5rem 0 1rem;
+    color: white;
+  
+  }
+  .social{
+    display: flex;
+    align-items: center;
+    column-gap: 0.5rem;
+    color: white;
+  
+  }
+  
+  .social .bx{
+    padding: 10px;
+    background: white;
+    color: black;
+    border-radius: 5rem;
+    font-size: 20px;
+  
+  }
+  .social .bx:hover{
+    background: var(--green-color);
+    color: var(--bg-color);
+    transition: 0.2s all linear;
+  }
+  .footer-box h2{
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  
+  }
+  .footer-box a{
+    color: #FFC107;
+    margin-bottom: 1rem;
+  
+  }
+  .footer-box a:hover{
+    color: var(--light-orange-color);
+  
+  }
+  .footer-box form{
+    border-bottom: 1px solid white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    column-gap: o.5rem;
+  
+  }
+  .footer-box form input{
+    background: transparent;
+    color: white;
+    border: none;
+    outline: none;
+  }
+  .footer-box form .bx{
+    font-size: 20px;
+    color: light orange;
+    cursor: pointer;
+  
+  }
+  .footer-box form .bxs-envelope{
+    color:#FFC107 ;
+  
+  }
+  
+  .copyright{
+    text-align: center;
+    padding: 20px;
+  
+  }

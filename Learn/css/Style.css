@@ -102,7 +102,7 @@ background-color: #8C2F39 3%;
     .hero-sec {
         width: 100%;
         height: 500px; 
-        background: url('img/dd.png') no-repeat center center/cover;
+        background: url("../img/dd.png") no-repeat center center/cover;
         position: relative;
         display: flex;
         justify-content: center;

@@ -19,7 +19,77 @@ body {
     color: var(--maroon);
     transition: var(--transition);
 }
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: #8C2F39; /* Maroon */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: 600;
+    color: #FFC107; /* Yellow */
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+  }
+  
+  .nav-links li a {
+    text-decoration: none;
+    color: #FFF; /* White for contrast */
+    font-weight: 400;
+    transition: color 0.3s;
+  }
+  
+  .nav-links li a:hover {
+    color: #FFC107; /* Yellow */
+  }
+  
+  .hamburger {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #FF9933; /* Saffron */
+  }
 
+  /* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 20px;
+    }
+  
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: #8C2F39; /* Maroon */
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  
+    .nav-links.active {
+        display: flex;
+    }
+  
+    .hamburger {
+        display: block;
+    }
+}
+  
 /* Header & Navigation */
 header {
     background-color: var(--dark-maroon);

@@ -98,7 +98,7 @@ body {
 .hero {
     height: 80vh;
     background: linear-gradient(rgba(0, 0, 0, 0.055), rgba(0, 0, 0, 0.312)),
-                url('https://galleryceylon.lk/wp-content/uploads/2021/04/traditional-paintings.jpg');
+                url('https://galleryceylon.lk/wp-content/uploads/2021/04/traditional-paintings.jpg') no-repeat center center/cover;
     background-size: cover;
     background-position: center;
     display: flex;

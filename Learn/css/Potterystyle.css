@@ -11,6 +11,10 @@
     --transition: all 0.3s ease;
 }
 
+*{
+    text-decoration: none;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;

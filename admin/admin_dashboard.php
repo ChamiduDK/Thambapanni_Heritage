@@ -29,7 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     }
 }
 
-
+// Search and filter parameters
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$status_filter = isset($_GET['status']) ? $_GET['status'] : '';
+$gender_filter = isset($_GET['gender']) ? $_GET['gender'] : '';
 
 // Build the SQL query
 $sql = "SELECT id, first_name, last_name, username, email, password, dob, gender, phone_number, address, 
@@ -500,7 +503,22 @@ $connection->close();
                     <h2>Registered Sellers</h2>
 
                     <!-- Search and Filter Form -->
-                   
+                   <form class="filter-form" method="GET" action="admin_dashboard.php">
+    <input type="text" name="search" placeholder="Search by username, email, or NIC" value="<?php echo htmlspecialchars($search); ?>">
+    <select name="status">
+        <option value="">All Statuses</option>
+        <option value="active" <?php echo $status_filter === 'active' ? 'selected' : ''; ?>>Active</option>
+        <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>>Pending</option>
+        <option value="suspended" <?php echo $status_filter === 'suspended' ? 'selected' : ''; ?>>Suspended</option>
+    </select>
+    <!--<select name="gender">-->
+    <!--    <option value="">All Genders</option>-->
+    <!--    <option value="Male" <?php echo $gender_filter === 'Male' ? 'selected' : ''; ?>>Male</option>-->
+    <!--    <option value="Female" <?php echo $gender_filter === 'Female' ? 'selected' : ''; ?>>Female</option>-->
+    <!--    <option value="Other" <?php echo $gender_filter === 'Other' ? 'selected' : ''; ?>>Other</option>-->
+    <!--</select>-->
+    <button type="submit">Filter <i class="fas fa-filter"></i></button>
+</form> 
 
                     <?php if (empty($sellers)) { ?>
                         <p>No sellers found matching your criteria.</p>

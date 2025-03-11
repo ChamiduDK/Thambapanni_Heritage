@@ -10,6 +10,19 @@ if (!isset($_SESSION['admin_id'])) {
 $errors = [];
 $success = '';
 
+// Handle delete action
+if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+    $product_id = $_GET['delete'];
+    $stmt = $connection->prepare("DELETE FROM products WHERE id = ?");
+    $stmt->bind_param("i", $product_id);
+    if ($stmt->execute()) {
+        $success = "Product deleted successfully";
+        $stmt->close();
+    } else {
+        $errors[] = "Error deleting product: " . $connection->error;
+    }
+}
+
 // Search and filter parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
@@ -55,9 +68,19 @@ $connection->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Same CSS as above */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root { --saffron: #FF9933; --green: #00843D; --maroon: #8C2A3C; --gold: #FFC107; --white: #FFFFFF; --gray: #F5F5F5; --dark-maroon: #5C1A28; --light-saffron: #FFDAB3; --shadow: 0 4px 15px rgba(0, 0, 0, 0.1); --transition: all 0.3s ease; }
+        :root { 
+            --saffron: #FF9933; 
+            --green: #00843D; 
+            --maroon: #8C2A3C; 
+            --gold: #FFC107; 
+            --white: #FFFFFF; 
+            --gray: #F5F5F5; 
+            --dark-maroon: #5C1A28; 
+            --light-saffron: #FFDAB3; 
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+            --transition: all 0.3s ease; 
+        }
         body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, var(--gray) 0%, var(--white) 100%); color: var(--dark-maroon); line-height: 1.6; overflow-x: hidden; }
         .wrapper { display: flex; min-height: 100vh; }
         .sidebar { width: 250px; background: var(--maroon); color: var(--white); position: fixed; top: 0; left: -250px; height: 100%; transition: var(--transition); z-index: 1000; }
@@ -91,14 +114,48 @@ $connection->close();
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--saffron); }
         th { background: var(--maroon); color: var(--white); font-weight: 500; }
         tr:hover { background: var(--light-saffron); }
-        .view-more-btn { background: var(--saffron); color: var(--dark-maroon); padding: 6px 12px; border: none; border-radius: 25px; cursor: pointer; transition: var(--transition); }
+        .view-more-btn, .action-btn { 
+            padding: 6px 12px; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            transition: var(--transition); 
+            font-size: 0.9rem;
+            margin: 2px;
+        }
+        .view-more-btn { background: var(--saffron); color: var(--dark-maroon); }
         .view-more-btn:hover { background: var(--gold); transform: translateY(-2px); }
+        .edit-btn { background: var(--gold); color: var(--dark-maroon); text-decoration: none; }
+        .edit-btn:hover { background: var(--saffron); transform: translateY(-2px); }
+        .delete-btn { background: var(--maroon); color: var(--white); }
+        .delete-btn:hover { background: var(--dark-maroon); transform: translateY(-2px); }
         .details { display: none; padding: 10px; background: var(--light-saffron); border-radius: 8px; margin-top: 5px; }
         .details.active { display: block; }
         .details img { max-width: 100px; height: auto; border-radius: 8px; border: 2px solid var(--saffron); margin: 5px 0; }
         @media (min-width: 769px) { .sidebar { left: 0; } .main-content { margin-left: 250px; } .menu-toggle { display: none; } }
-        @media (max-width: 768px) { .sidebar { width: 200px; left: -200px; } .sidebar.active { left: 0; } .close-sidebar { display: block; } .menu-toggle { display: block; } .main-content { padding: 15px; } h1 { font-size: 1.8rem; } h2 { font-size: 1.5rem; } .filter-form input { max-width: 150px; padding: 10px; font-size: 0.95rem; } .filter-form button { padding: 10px 20px; font-size: 0.95rem; } table { font-size: 0.85rem; } th, td { padding: 8px; } }
-        @media (max-width: 480px) { .sidebar { width: 180px; left: -180px; } h1 { font-size: 1.5rem; } h2 { font-size: 1.3rem; } p { font-size: 0.9rem; } .filter-form input { max-width: 120px; padding: 8px; font-size: 0.9rem; } .filter-form button { padding: 8px 15px; font-size: 0.9rem; } table { font-size: 0.8rem; } th, td { padding: 6px; } }
+        @media (max-width: 768px) { 
+            .sidebar { width: 200px; left: -200px; } 
+            .sidebar.active { left: 0; } 
+            .close-sidebar { display: block; } 
+            .menu-toggle { display: block; } 
+            .main-content { padding: 15px; } 
+            h1 { font-size: 1.8rem; } 
+            h2 { font-size: 1.5rem; } 
+            .filter-form input { max-width: 150px; padding: 10px; font-size: 0.95rem; } 
+            .filter-form button { padding: 10px 20px; font-size: 0.95rem; } 
+            table { font-size: 0.85rem; } 
+            th, td { padding: 8px; } 
+        }
+        @media (max-width: 480px) { 
+            .sidebar { width: 180px; left: -180px; } 
+            h1 { font-size: 1.5rem; } 
+            h2 { font-size: 1.3rem; } 
+            p { font-size: 0.9rem; } 
+            .filter-form input { max-width: 120px; padding: 8px; font-size: 0.9rem; } 
+            .filter-form button { padding: 8px 15px; font-size: 0.9rem; } 
+            table { font-size: 0.8rem; } 
+            th, td { padding: 6px; } 
+        }
     </style>
 </head>
 <body>
@@ -148,6 +205,7 @@ $connection->close();
                                         <th>Username</th>
                                         <th>Price</th>
                                         <th>Details</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -172,6 +230,10 @@ $connection->close();
                                                         <?php } ?>
                                                     </p>
                                                 </div>
+                                            </td>
+                                            <td>
+                                                <a href="edit_product.php?id=<?php echo $product['id']; ?>" class="action-btn edit-btn">Edit</a>
+                                                <button class="action-btn delete-btn" onclick="if(confirm('Are you sure you want to delete this product?')) window.location.href='admin_products.php?delete=<?php echo $product['id']; ?>'">Delete</button>
                                             </td>
                                         </tr>
                                     <?php } ?>

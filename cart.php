@@ -1,4 +1,3 @@
-
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -65,13 +64,17 @@ $query = "
     LEFT JOIN gig_requests gr ON c.gig_request_id = gr.id AND c.type = 'gig'
     LEFT JOIN gigs g ON gr.gig_id = g.id AND c.type = 'gig'
     LEFT JOIN users gu ON g.user_id = gu.id AND c.type = 'gig'
-    WHERE c.customer_id = $customer_id
+    WHERE c.customer_id = ?
 ";
-$result = $connection->query($query);
-if (!$result) {
-    die("Query failed: " . $connection->error);
+$stmt = $connection->prepare($query);
+if ($stmt === false) {
+    die("Cart query prepare failed: " . $connection->error);
 }
+$stmt->bind_param("i", $customer_id);
+$stmt->execute();
+$result = $stmt->get_result();
 $cart_items = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 
 // Handle AJAX request to create Stripe session and save pending order
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'create_checkout') {
@@ -85,9 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $grand_total = 0;
     foreach ($cart_items as $item) {
         $image = $item['type'] === 'product' ? $item['product_image'] : $item['gig_image'];
-        $product_data = [
-            'name' => $item['item_name'],
-        ];
+        $product_data = ['name' => $item['item_name']];
         if (!empty($image)) {
             $product_data['images'] = [$image];
         }
@@ -104,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 
     try {
-        // Start transaction to save pending order
         $connection->begin_transaction();
 
         // Insert into orders table as pending
@@ -116,6 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         // Insert cart items into order_items with seller info
         $stmt = $connection->prepare("INSERT INTO order_items (order_id, item_name, type, price, quantity, seller_username) VALUES (?, ?, ?, ?, ?, ?)");
         foreach ($cart_items as $item) {
+            if (empty($item['seller_username'])) {
+                throw new Exception("Seller username missing for item: " . $item['item_name']);
+            }
             $stmt->bind_param("issdis", $order_id, $item['item_name'], $item['type'], $item['price'], $item['quantity'], $item['seller_username']);
             $stmt->execute();
         }
@@ -134,12 +137,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $stmt->bind_param("si", $session->id, $order_id);
         $stmt->execute();
 
-        // Commit transaction
         $connection->commit();
 
         $_SESSION['cart_items'] = $cart_items;
         $_SESSION['grand_total'] = $grand_total;
-        $_SESSION['pending_order_id'] = $order_id; // Store order ID for later use
+        $_SESSION['pending_order_id'] = $order_id;
 
         echo json_encode(['sessionId' => $session->id]);
     } catch (\Stripe\Exception\ApiErrorException $e) {
@@ -159,13 +161,11 @@ if (isset($_GET['session_id'])) {
         if ($session->payment_status === 'paid') {
             $connection->begin_transaction();
 
-            // Update the pending order to paid
             $order_id = $_SESSION['pending_order_id'];
             $stmt = $connection->prepare("UPDATE orders SET status = 'paid' WHERE id = ? AND stripe_session_id = ?");
             $stmt->bind_param("is", $order_id, $_GET['session_id']);
             $stmt->execute();
 
-            // Clear the cart
             $stmt = $connection->prepare("DELETE FROM cart WHERE customer_id = ?");
             $stmt->bind_param("i", $customer_id);
             $stmt->execute();

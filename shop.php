@@ -2,20 +2,28 @@
 session_start();
 require_once 'db_connect.php';
 
+// Check database connection
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+}
+
 // Get filters
 $selected_category = isset($_GET['category']) ? intval($_GET['category']) : 0;
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
-$categories = $connection->query("SELECT * FROM categories WHERE type = 'product'")->fetch_all(MYSQLI_ASSOC);
 
-// Build the product query
+// Fetch categories
+$categories_stmt = $connection->query("SELECT * FROM categories WHERE type = 'product'");
+$categories = $categories_stmt->fetch_all(MYSQLI_ASSOC);
+
+// Build the product query (removed quantity > 0 filter to show all products)
 $query = "SELECT p.*, c.name AS category_name, u.username, u.id AS user_id 
           FROM products p 
           LEFT JOIN categories c ON p.category_id = c.id 
           LEFT JOIN users u ON p.user_id = u.id 
           WHERE 1=1";
 
-$params = array();
+$params = [];
 $types = '';
 
 if ($product_id > 0) {
@@ -37,8 +45,11 @@ if (!empty($search_query) && $product_id == 0) {
     $types .= 'sss';
 }
 
-// Prepare and execute the query
+// Prepare and execute the product query
 $stmt = $connection->prepare($query);
+if ($stmt === false) {
+    die("Prepare failed: " . $connection->error);
+}
 if (!empty($params)) {
     $stmt->bind_param($types, ...$params);
 }
@@ -47,32 +58,60 @@ $result = $stmt->get_result();
 $products = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-
 // Handle Add to Cart
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     if (!isset($_SESSION['customer_id'])) {
         header("Location: customer_login.php?redirect=shop.php");
         exit;
     }
-    
+
     $product_id = intval($_POST['product_id']);
     $quantity = intval($_POST['quantity']);
     $customer_id = $_SESSION['customer_id'];
 
-    $stmt = $connection->prepare("INSERT INTO cart (customer_id, product_id, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + ?");
-    $stmt->bind_param("iiii", $customer_id, $product_id, $quantity, $quantity);
-    if ($stmt->execute()) {
-        header("Location: shop.php?success=Added to cart!");
+    // Check stock availability
+    $stock_stmt = $connection->prepare("SELECT quantity FROM products WHERE id = ?");
+    $stock_stmt->bind_param("i", $product_id);
+    $stock_stmt->execute();
+    $stock_result = $stock_stmt->get_result()->fetch_assoc();
+    $available_quantity = $stock_result['quantity'] ?? 0;
+    $stock_stmt->close();
+
+    if ($available_quantity < $quantity) {
+        $error = "Insufficient stock. Available: $available_quantity";
     } else {
-        $error = "Failed to add to cart: " . $connection->error;
+        // Check if item already exists in cart
+        $cart_check_stmt = $connection->prepare("SELECT quantity FROM cart WHERE customer_id = ? AND product_id = ? AND type = 'product'");
+        $cart_check_stmt->bind_param("ii", $customer_id, $product_id);
+        $cart_check_stmt->execute();
+        $cart_result = $cart_check_stmt->get_result()->fetch_assoc();
+        $cart_check_stmt->close();
+
+        $total_quantity = ($cart_result['quantity'] ?? 0) + $quantity;
+        if ($available_quantity < $total_quantity) {
+            $error = "Total quantity exceeds stock. Available: $available_quantity";
+        } else {
+            $stmt = $connection->prepare("INSERT INTO cart (customer_id, product_id, type, quantity) VALUES (?, ?, 'product', ?) ON DUPLICATE KEY UPDATE quantity = quantity + ?");
+            $stmt->bind_param("iiii", $customer_id, $product_id, $quantity, $quantity);
+            if ($stmt->execute()) {
+                header("Location: shop.php?success=Added to cart!");
+                exit;
+            } else {
+                $error = "Failed to add to cart: " . $connection->error;
+            }
+            $stmt->close();
+        }
     }
-    $stmt->close();
 }
 
 // Get cart items count
 $cart_items = 0;
 if (isset($_SESSION['customer_id'])) {
-    $cart_items = $connection->query("SELECT COUNT(*) as count FROM cart WHERE customer_id = " . $_SESSION['customer_id'])->fetch_assoc()['count'];
+    $cart_stmt = $connection->prepare("SELECT COUNT(*) as count FROM cart WHERE customer_id = ?");
+    $cart_stmt->bind_param("i", $_SESSION['customer_id']);
+    $cart_stmt->execute();
+    $cart_items = $cart_stmt->get_result()->fetch_assoc()['count'];
+    $cart_stmt->close();
 }
 
 $connection->close();
@@ -92,6 +131,19 @@ $connection->close();
     <div class="container">
         <div class="nav">
             <button class="nav-toggle"><i class="fas fa-bars"></i></button>
+            <a href="index.php">Home</a>
+            <div class="gtranslate_wrapper"></div>
+            <script>
+                window.gtranslateSettings = {
+                    "default_language": "en",
+                    "languages": ["en", "si", "ta"],
+                    "wrapper_selector": ".gtranslate_wrapper",
+                    "flag_size": 24,
+                    "switcher_horizontal_position": "inline",
+                    "flag_style": "3d"
+                }
+            </script>
+            <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
             <div class="nav-links">
                 <a href="gigs.php">Gigs</a>
                 <a href="cart.php" class="cart-link">Cart <i class="fas fa-shopping-cart"></i> (<?php echo $cart_items; ?>)</a>
@@ -135,7 +187,7 @@ $connection->close();
                 <p>No products found.</p>
             <?php } else { ?>
                 <?php foreach ($products as $product) { ?>
-                    <div class="product">
+                    <div class="product <?php echo $product['quantity'] == 0 ? 'sold-out' : ''; ?>">
                         <div class="product-image <?php echo empty($product['image']) ? 'placeholder' : ''; ?>">
                             <?php if (!empty($product['image'])) { ?>
                                 <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
@@ -147,13 +199,18 @@ $connection->close();
                             <h3><?php echo htmlspecialchars($product['name']); ?></h3>
                             <p class="description"><?php echo htmlspecialchars($product['description']); ?></p>
                             <p><strong>Price:</strong> LKR <?php echo number_format($product['price'], 2); ?></p>
-                            <p><strong>Category:</strong> <?php echo htmlspecialchars($product['category_name']); ?></p>
-                            <p><strong>Seller:</strong> <?php echo htmlspecialchars($product['username']); ?></p>
-                            <form action="shop.php" method="POST">
-                                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                                <input type="number" name="quantity" value="1" min="1">
-                                <button type="submit" name="add_to_cart">Add to Cart <i class="fas fa-cart-plus"></i></button>
-                            </form>
+                            <p><strong>Category:</strong> <?php echo htmlspecialchars($product['category_name'] ?? 'Uncategorized'); ?></p>
+                            <p><strong>Seller:</strong> <?php echo htmlspecialchars($product['username'] ?? 'Unknown'); ?></p>
+                            <p><strong>In Stock:</strong> <?php echo htmlspecialchars($product['quantity']); ?></p>
+                            <?php if ($product['quantity'] > 0) { ?>
+                                <form action="shop.php" method="POST">
+                                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                                    <input type="number" name="quantity" value="1" min="1" max="<?php echo $product['quantity']; ?>">
+                                    <button type="submit" name="add_to_cart">Add to Cart <i class="fas fa-cart-plus"></i></button>
+                                </form>
+                            <?php } else { ?>
+                                <div class="sold-out-label">Sold Out</div>
+                            <?php } ?>
                         </div>
                     </div>
                 <?php } ?>

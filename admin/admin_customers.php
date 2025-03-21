@@ -421,7 +421,7 @@ $connection->close();
             <ul class="sidebar-menu">
                 <li><a href="admin_dashboard.php"><i class="fas fa-users"></i> Sellers</a></li>
                 <li><a href="admin_customers.php"><i class="fas fa-user-friends"></i> Customers</a></li>
-                <li class="active" data-section="categories"><i class="fas fa-list"></i> Categories</li>
+                <li><a href="admin_categories.php"><i class="fas fa-list"></i> Categories<a></a></li>
                 <li><a href="admin_gigs.php"><i class="fas fa-briefcase"></i> Gigs</a></li>
                 <li><a href="admin_products.php"><i class="fas fa-box"></i> Products</a></li>
                 <li><a href="admin_logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>

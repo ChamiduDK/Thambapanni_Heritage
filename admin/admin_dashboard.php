@@ -89,6 +89,8 @@ $connection->close();
     <title>Admin Dashboard - Thambapanni Heritage</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="JavaScript" href="js/scripts.js">
     <style>
         * {
             margin: 0;
@@ -474,9 +476,9 @@ $connection->close();
                 <i class="fas fa-times close-sidebar" id="closeSidebar"></i>
             </div>
             <ul class="sidebar-menu">
-<li class="active" data-section="sellers"><i class="fas fa-users"></i> Sellers</li>
-<li><a href="admin_customers.php"><i class="fas fa-user-friends"></i> Customers</a></li>
-                <li class="admin_categories.php" data-section="categories"><i class="fas fa-list"></i> Categories</li>
+                <li class="active" data-section="sellers"><i class="fas fa-users"></i> Sellers</li>
+                <li><a href="admin_customers.php"><i class="fas fa-user-friends"></i> Customers</a></li>
+                <li><a href="admin_categories.php" data-section="categories"><i class="fas fa-list"></i> Categories</a></li>
                 <li><a href="admin_gigs.php"><i class="fas fa-briefcase"></i> Gigs</a></li>
                 <li><a href="admin_products.php"><i class="fas fa-box"></i> Products</a></li>
                 <li><a href="admin_logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -564,20 +566,28 @@ $connection->close();
                                                     <p><strong>Phone:</strong> <?php echo htmlspecialchars($seller['phone_number']); ?></p>
                                                     <p><strong>Address:</strong> <?php echo htmlspecialchars($seller['address']); ?></p>
                                                     <p><strong>NIC Number:</strong> <?php echo htmlspecialchars($seller['nic_number']); ?></p>
-                                                    <p><strong>NIC Front:</strong> 
-                                                        <?php if (!empty($seller['nic_front'])) { ?>
-                                                            <img src="../uploads/<?php echo htmlspecialchars($seller['nic_front']); ?>" alt="NIC Front">
-                                                        <?php } else { ?>
-                                                            N/A
-                                                        <?php } ?>
-                                                    </p>
-                                                    <p><strong>NIC Back:</strong> 
-                                                        <?php if (!empty($seller['nic_back'])) { ?>
-                                                            <img src="../uploads/<?php echo htmlspecialchars($seller['nic_back']); ?>" alt="NIC Back">
-                                                        <?php } else { ?>
-                                                            N/A
-                                                        <?php } ?>
-                                                    </p>
+<p><strong>NIC Front:</strong> 
+    <?php 
+    $nic_front_path = "" . htmlspecialchars($seller['nic_front']);
+    if (!empty($seller['nic_front']) && file_exists($nic_front_path)) { ?>
+        <a href="<?php echo $nic_front_path; ?>" target="_blank">
+            <img src="<?php echo $nic_front_path; ?>" alt="NIC Front" style="max-width: 100px;">
+        </a>
+    <?php } else { ?>
+        N/A <?php echo !empty($seller['nic_front']) ? "(File '$nic_front_path' missing)" : ""; ?>
+    <?php } ?>
+</p>
+<p><strong>NIC Back:</strong> 
+    <?php 
+    $nic_back_path = "" . htmlspecialchars($seller['nic_back']);
+    if (!empty($seller['nic_back']) && file_exists($nic_back_path)) { ?>
+        <a href="<?php echo $nic_back_path; ?>" target="_blank">
+            <img src="<?php echo $nic_back_path; ?>" alt="NIC Back" style="max-width: 100px;">
+        </a>
+    <?php } else { ?>
+        N/A <?php echo !empty($seller['nic_back']) ? "(File '$nic_back_path' missing)" : ""; ?>
+    <?php } ?>
+</p>
                                                     <p><strong>About:</strong> <?php echo htmlspecialchars($seller['about']); ?></p>
                                                     <p><strong>Created At:</strong> <?php echo htmlspecialchars($seller['created_at']); ?></p>
                                                     <p><strong>Chatra ID:</strong> <?php echo htmlspecialchars($seller['chatra_operator_id'] ?? 'N/A'); ?></p>

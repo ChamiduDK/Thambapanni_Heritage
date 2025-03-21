@@ -41,9 +41,23 @@ $connection->close();
     <div class="container">
         <div class="nav">
             <button class="nav-toggle"><i class="fas fa-bars"></i></button>
+            <a href="index.php">Home</a>
+
+            <div class="gtranslate_wrapper"></div>
+            <script>
+            window.gtranslateSettings = {
+                "default_language": "en",
+                "languages": ["en", "si", "ta"],
+                "wrapper_selector": ".gtranslate_wrapper",
+                "flag_size": 24,
+                "switcher_horizontal_position": "inline",
+                "flag_style": "3d"
+            }
+            </script>
+            <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
             <div class="nav-links">
                 <a href="shop.php">Shop</a>
-                <a href="cart.php" class="cart-link">Cart <i class="fas fa-shopping-cart"></i> (<?php echo $cart_items; ?>)</a>
+                <a href="cart.php" class="cart-link">Cart <i class="fas fa-shopping-cart"></i> (<?php echo isset($cart_items) ? $cart_items : 0; ?>)</a>
                 <a href="customer_dashboard.php">Dashboard</a>
                 <a href="logout.php">Logout</a>
             </div>
@@ -83,8 +97,8 @@ $connection->close();
                         </div>
                         <div class="gig-details">
                             <h3><?php echo htmlspecialchars($gig['title']); ?></h3>
-                            <p class="description"><?php echo htmlspecialchars($gig['description']); ?></p>
-                            <p><strong>Price:</strong> LKR <?php echo number_format($gig['price'], 2); ?></p>
+                            <p class="description"><?php echo htmlspecialchars(substr($gig['description'], 0, 300)) . (strlen($gig['description']) > 300 ? '...' : ''); ?></p>
+                            <p><strong>Starting Price:</strong> LKR <?php echo number_format($gig['price'], 2); ?></p>
                             <p><strong>Category:</strong> <?php echo htmlspecialchars($gig['category_name']); ?></p>
                             <p><strong>Provider:</strong> <?php echo htmlspecialchars($gig['username']); ?></p>
                             <a href="customer_dashboard.php?gig_id=<?php echo $gig['id']; ?>">
@@ -98,6 +112,7 @@ $connection->close();
     </div>
 
     <script>
+        // Toggle navigation
         document.querySelector('.nav-toggle').addEventListener('click', function() {
             document.querySelector('.nav-links').classList.toggle('active');
         });

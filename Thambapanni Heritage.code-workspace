@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Cart with payment gateway/vendor"
+		}
+	],
+	"settings": {}
+}

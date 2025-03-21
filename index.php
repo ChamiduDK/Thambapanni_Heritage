@@ -246,33 +246,43 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
   </section>
 
   <!-- Categories Section -->
-  <section id="categories" class="categories">
-    <div class="container">
-      <h2>Explore Categories</h2>
-      <div class="category-grid">
-        <div class="category-item">
+<section id="categories" class="categories">
+  <div class="container">
+    <h2>Explore Categories</h2>
+    <div class="category-grid">
+      <div class="category-item">
+        <a href="handicrafts.html">
           <img src="images/handicrafts.jpg" alt="Handicrafts">
           <h3>Handicrafts</h3>
-        </div>
-        <div class="category-item">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="paintings.html">
           <img src="images/paintings.jpg" alt="Paintings">
           <h3>Paintings</h3>
-        </div>
-        <div class="category-item">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="textiles.html">
           <img src="images/textiles.jpg" alt="Textiles">
           <h3>Textiles</h3>
-        </div>
-        <div class="category-item">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="sculptures.html">
           <img src="images/sculptures.jpg" alt="Sculptures">
           <h3>Sculptures</h3>
-        </div>
-        <div class="category-item">
-          <img src="images/ceramic.jpg" alt="Sculptures">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="ceramic.html">
+          <img src="images/ceramic.jpg" alt="Ceramic">
           <h3>Ceramic</h3>
-        </div>
+        </a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- Latest Products Section -->
   <section id="products" class="products">

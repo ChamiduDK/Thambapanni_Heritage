@@ -5,7 +5,7 @@ require_once 'db_connect.php';
 $product_query = "SELECT p.*, c.name AS category_name 
                   FROM products p 
                   LEFT JOIN categories c ON p.category_id = c.id 
-                  ORDER BY p.id DESC LIMIT 3"; 
+                  ORDER BY p.id DESC LIMIT 6"; 
 $products = $connection->query($product_query)->fetch_all(MYSQLI_ASSOC);
 $category_query = "SELECT * FROM categories WHERE type = 'product'";
 $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
@@ -176,6 +176,18 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
       border-radius: 25px;
     }
   }
+  .hero {
+  height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('images/hero.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #FFF;
+}
+
   </style>
   <style>
   #google_translate_element {
@@ -198,8 +210,8 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
         <li><a href="#products">Products</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="shop.php">Shop</a></li>
-        <li><a href="https://darkgreen-parrot-704251.hostingersite.com/Learn/">Learn</a></li>
-        <li><a href="#" style="color: #FFC107;"><b>Become a Seller</b></a></li>
+        <li><a href="https://deepskyblue-lobster-260457.hostingersite.com/Learn/">Learn</a></li>
+        <li><a href="Seller/index.html" style="color: #FFC107;"><b>Become a Seller</b></a></li>
         <div class="gtranslate_wrapper"></div>
         <script>
         window.gtranslateSettings = {
@@ -245,34 +257,44 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
     </div>
   </section>
 
-  <!-- Categories Section -->
-  <section id="categories" class="categories">
-    <div class="container">
-      <h2>Explore Categories</h2>
-      <div class="category-grid">
-        <div class="category-item">
+ <!-- Categories Section -->
+<section id="categories" class="categories">
+  <div class="container">
+    <h2>Explore Categories</h2>
+    <div class="category-grid">
+      <div class="category-item">
+        <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=6">
           <img src="images/handicrafts.jpg" alt="Handicrafts">
           <h3>Handicrafts</h3>
-        </div>
-        <div class="category-item">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=8">
           <img src="images/paintings.jpg" alt="Paintings">
           <h3>Paintings</h3>
-        </div>
-        <div class="category-item">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=7">
           <img src="images/textiles.jpg" alt="Textiles">
           <h3>Textiles</h3>
-        </div>
-        <div class="category-item">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=9">
           <img src="images/sculptures.jpg" alt="Sculptures">
           <h3>Sculptures</h3>
-        </div>
-        <div class="category-item">
-          <img src="images/ceramic.jpg" alt="Sculptures">
+        </a>
+      </div>
+      <div class="category-item">
+        <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=10">
+          <img src="images/ceramic.jpg" alt="Ceramic">
           <h3>Ceramic</h3>
-        </div>
+        </a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- Latest Products Section -->
   <section id="products" class="products">
@@ -292,6 +314,7 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
           <?php } ?>
           <h3><?php echo htmlspecialchars($product['name']); ?></h3>
           <p>LKR <?php echo number_format($product['price'], 2); ?></p>
+          <br>
           <a href="shop.php?product_id=<?php echo $product['id']; ?>" class="btn">View Details</a>
         </div>
         <?php } ?>
@@ -338,11 +361,11 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
     </div>
     <div class="footer-box">
       <h2>Our Products</h2>
-      <a href="#">Handcrafted Jewelry</a>
-      <a href="#">Traditional Textiles & Batiks</a>
-      <a href="#">Sri Lankan Paintings</a>
-      <a href="#">Wooden Sculptures</a>
-      <a href="#">Ceramic Pottery</a>
+      <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=6">Handcrafted Jewelry</a>
+      <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=7">Traditional Textiles & Batiks</a>
+      <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=8">Sri Lankan Paintings</a>
+      <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=9">Wooden Sculptures</a>
+      <a href="https://deepskyblue-lobster-260457.hostingersite.com/shop.php?category=9">Ceramic Pottery</a>
 
     </div>
     <div class="footer-box">
@@ -383,7 +406,19 @@ $categories = $connection->query($category_query)->fetch_all(MYSQLI_ASSOC);
       &#169; Thambapanni Heritage All Right Reserved.
     </p>
   </div>
-
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/67c33d609b9d8e190efa91bd/1il9afgrc';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 
   <script src="js/script.js"></script>
 </body>
